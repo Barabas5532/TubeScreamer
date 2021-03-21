@@ -1,5 +1,5 @@
 #include "FaustParameterFloat.h"
-#include "TubeScreamer.h"
+#include "faust/gui/MapUI.h"
 
 FaustParameterFloat::FaustParameterFloat(MapUI** faustUI, String parameterID, String parameterName, float minValue, float maxValue, float defaultValue)
     : AudioParameterFloat(parameterID, parameterName, minValue, maxValue, defaultValue)
@@ -11,6 +11,6 @@ void FaustParameterFloat::valueChanged(float newValue)
 {
     if(faustUI != nullptr)
     {
-        (*faustUI)->setParamValue(AudioParameterFloat::RangedAudioParameter::AudioProcessorParameterWithID::paramID, newValue);
+        (*faustUI)->setParamValue(AudioParameterFloat::RangedAudioParameter::AudioProcessorParameterWithID::paramID.toStdString(), newValue);
     }
 }
