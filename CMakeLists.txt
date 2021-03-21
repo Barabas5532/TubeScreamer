@@ -17,6 +17,7 @@ target_sources(TubeScreamer
     PRIVATE
         PluginEditor.cpp
         PluginProcessor.cpp
+        FaustParameterFloat.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h)
 
 target_include_directories(TubeScreamer
