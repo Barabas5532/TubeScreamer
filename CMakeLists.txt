@@ -17,7 +17,6 @@ target_sources(TubeScreamer
     PRIVATE
         PluginEditor.cpp
         PluginProcessor.cpp
-        tubescreamer.dsp
         ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h)
 
 target_include_directories(TubeScreamer
@@ -43,7 +42,7 @@ target_link_libraries(TubeScreamer
         juce::juce_recommended_warning_flags)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h
-     COMMAND faust -i -a faustMinimal.h tubescreamer.dsp ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h
+     COMMAND faust -i -a faustMinimal.h tubescreamer.dsp -o ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h
      DEPENDS tubescreamer.dsp
      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      VERBATIM)

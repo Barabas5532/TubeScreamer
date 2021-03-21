@@ -2,6 +2,9 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 
+class dsp;
+class MapUI;
+
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
 {
@@ -43,6 +46,10 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    MapUI* fUI;
+    dsp* fDSP;
+    float** outputs;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };
