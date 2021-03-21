@@ -12,4 +12,4 @@ post_filter = fi.lowpass(1, 350 + (tone * (4500 - 350)));
 
 volume_control = ba.db2linear((volume - 1) * 40);
 
-process =  input_filter : clipping : post_filter * volume_control;
+process = _,_ :> input_filter : clipping : post_filter * volume_control <: _,_;
