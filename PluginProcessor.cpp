@@ -93,7 +93,8 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     fDSP->buildUserInterface(fUI);
     outputs = new float*[2];
     for (int channel = 0; channel < 2; ++channel) {
-        outputs[channel] = new float[samplesPerBlock];
+        inputs[channel] = new float[(size_t)samplesPerBlock];
+        outputs[channel] = new float[(size_t)samplesPerBlock];
     }
 }
 
@@ -102,6 +103,7 @@ void AudioPluginAudioProcessor::releaseResources()
     delete fDSP;
     delete fUI;
     for (int channel = 0; channel < 2; ++channel) {
+        delete[] inputs[channel];
         delete[] outputs[channel];
     }
     delete [] outputs;
@@ -134,11 +136,19 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages)
 {
+    juce::ignoreUnused(midiMessages);
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    fDSP->compute(buffer.getNumSamples(),NULL,outputs);
+    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+        for (int i = 0; i < buffer.getNumSamples(); i++) {
+            inputs[channel][i] = *buffer.getWritePointer(channel,i);
+        }
+    }
+
+    fDSP->compute(buffer.getNumSamples(),inputs,outputs);
 
     for (int channel = 0; channel < totalNumOutputChannels; ++channel) {
         for (int i = 0; i < buffer.getNumSamples(); i++) {

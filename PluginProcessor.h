@@ -48,6 +48,7 @@ public:
 private:
     MapUI* fUI;
     dsp* fDSP;
+    float** inputs;
     float** outputs;
 
     //==============================================================================
