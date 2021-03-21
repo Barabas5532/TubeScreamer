@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "TubeScreamer.h"
+#include "FaustParameterFloat.h"
 
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
@@ -11,7 +12,28 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), parameters(*this, nullptr, juce::Identifier("parameters"),
+                           {
+                           std::make_unique<FaustParameterFloat> (&fUI,
+                                   "gain",
+                                   "Gain",
+                                   0.f,
+                                   1.f,
+                                   0.5f),
+                           std::make_unique<FaustParameterFloat> (&fUI,
+                                   "tone",
+                                   "Tone",
+                                   0.f,
+                                   1.f,
+                                   0.5f),
+                           std::make_unique<FaustParameterFloat> (&fUI,
+                                   "volume",
+                                   "Volume",
+                                   0.f,
+                                   1.f,
+                                   0.5f),
+                           })
+
 {
 }
 
@@ -91,6 +113,7 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     fDSP->init(sampleRate);
     fUI = new MapUI();
     fDSP->buildUserInterface(fUI);
+    inputs = new float*[2];
     outputs = new float*[2];
     for (int channel = 0; channel < 2; ++channel) {
         inputs[channel] = new float[(size_t)samplesPerBlock];
