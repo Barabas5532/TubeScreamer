@@ -32,7 +32,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                                    0.f,
                                    1.f,
                                    0.5f),
-                           })
+                           }), fUI(nullptr), fDSP(nullptr)
 
 {
 }
@@ -109,6 +109,8 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    juce::Logger::outputDebugString("prepare\n");
+
     fDSP = new mydsp();
     fDSP->init(sampleRate);
     fUI = new MapUI();
@@ -123,13 +125,21 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 
 void AudioPluginAudioProcessor::releaseResources()
 {
+    juce::Logger::outputDebugString("release\n");
+
     delete fDSP;
     delete fUI;
     for (int channel = 0; channel < 2; ++channel) {
         delete[] inputs[channel];
         delete[] outputs[channel];
     }
-    delete [] outputs;
+    delete[] outputs;
+    delete[] inputs;
+
+    fDSP = nullptr;
+    fUI = nullptr;
+    outputs = nullptr;
+    inputs = nullptr;
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const

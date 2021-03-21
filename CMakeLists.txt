@@ -9,7 +9,7 @@ juce_add_plugin(TubeScreamer
     PLUGIN_MANUFACTURER_CODE BaRa
     PLUGIN_CODE Tube
     FORMATS VST3 Standalone
-    PRODUCT_NAME "Tube Screamer")
+    PRODUCT_NAME "TubeScreamer")
 
 juce_generate_juce_header(TubeScreamer)
 
