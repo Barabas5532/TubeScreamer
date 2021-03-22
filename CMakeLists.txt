@@ -20,6 +20,9 @@ target_sources(TubeScreamer
         FaustParameterFloat.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/TubeScreamer.h)
 
+set_source_files_properties(PluginProcessor.cpp PROPERTIES COMPILE_OPTIONS
+        "-Wno-unused-parameter;-Wno-overloaded-virtual")
+
 target_include_directories(TubeScreamer
     PRIVATE
         .
