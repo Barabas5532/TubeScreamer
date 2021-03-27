@@ -32,13 +32,23 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                                    0.f,
                                    1.f,
                                    0.5f),
-                           }), fUI(nullptr), fDSP(nullptr)
+                           }), currentBufferSize(0)
 
 {
+    fDSP = new mydsp();
+    fUI = new MapUI();
+    fDSP->buildUserInterface(fUI);
+
+    for (int channel = 0; channel < 2; ++channel) {
+        inputs[channel] = nullptr;
+        outputs[channel] = nullptr;
+    }
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
+    delete fDSP;
+    delete fUI;
 }
 
 //==============================================================================
@@ -109,37 +119,42 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    juce::Logger::outputDebugString("prepare\n");
-
-    fDSP = new mydsp();
     fDSP->init(sampleRate);
-    fUI = new MapUI();
-    fDSP->buildUserInterface(fUI);
-    inputs = new float*[2];
-    outputs = new float*[2];
-    for (int channel = 0; channel < 2; ++channel) {
-        inputs[channel] = new float[(size_t)samplesPerBlock];
-        outputs[channel] = new float[(size_t)samplesPerBlock];
+
+    if(currentBufferSize != samplesPerBlock)
+    {
+        for (int channel = 0; channel < 2; ++channel) {
+            if(inputs[channel] != nullptr)
+            {
+                delete[] inputs[channel];
+                inputs[channel] = nullptr;
+            }
+
+            if(outputs[channel] != nullptr)
+            {
+                delete[] outputs[channel];
+                outputs[channel] = nullptr;
+            }
+
+            outputs[channel] = new float[(size_t)samplesPerBlock];
+            inputs[channel] = new float[(size_t)samplesPerBlock];
+        }
+
+        currentBufferSize = samplesPerBlock;
     }
 }
 
 void AudioPluginAudioProcessor::releaseResources()
 {
-    juce::Logger::outputDebugString("release\n");
-
-    delete fDSP;
-    delete fUI;
     for (int channel = 0; channel < 2; ++channel) {
         delete[] inputs[channel];
         delete[] outputs[channel];
-    }
-    delete[] outputs;
-    delete[] inputs;
 
-    fDSP = nullptr;
-    fUI = nullptr;
-    outputs = nullptr;
-    inputs = nullptr;
+        inputs[channel] = nullptr;
+        outputs[channel] = nullptr;
+    }
+
+    currentBufferSize = 0;
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const

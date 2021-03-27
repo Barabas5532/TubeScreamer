@@ -50,8 +50,9 @@ public:
 private:
     MapUI* fUI;
     dsp* fDSP;
-    float** inputs;
-    float** outputs;
+    float* inputs[2];
+    float* outputs[2];
+    int currentBufferSize;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
